@@ -76,92 +76,92 @@
 <body class="flex justify-center items-center min-h-screen">
 
   <!-- RWD APP 容器核心 -->
-  <div class="app-container w-full max-w-md min-h-screen flex flex-col relative pb-20">
+  <div class="app-container w-full max-w-md min-h-screen flex flex-col relative pb-24">
     
     <!-- 1. 頂部 APP 標頭 -->
-    <header class="bg-[#1a1a1a] border-b border-[#262626] sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#e28743] to-[#ff9f59] flex items-center justify-center shadow-lg shadow-amber-950/40">
-          <i data-lucide="line-chart" class="w-4.5 h-4.5 text-black stroke-[2.5]"></i>
+    <header class="bg-[#1a1a1a] border-b border-[#262626] sticky top-0 z-40 px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#e28743] to-[#ff9f59] flex items-center justify-center shadow-lg shadow-amber-950/40">
+          <i data-lucide="line-chart" class="w-5 h-5 text-black stroke-[2.5]"></i>
         </div>
         <div>
-          <h1 class="text-sm font-bold text-white tracking-wide">投資損益隨身帳</h1>
-          <p class="text-[9px] text-gray-500 uppercase tracking-widest">IndexedDB Offline Sandbox</p>
+          <h1 class="text-base font-extrabold text-white tracking-wide">投資損益隨身帳</h1>
+          <p class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">IndexedDB Offline Sandbox</p>
         </div>
       </div>
-      <span class="text-[10px] font-semibold text-gray-400 bg-[#262626] px-2 py-1 rounded-md border border-[#333]">
+      <span class="text-xs font-bold text-gray-400 bg-[#262626] px-2.5 py-1 rounded-md border border-[#333]">
         台股配色 📈
       </span>
     </header>
 
     <!-- 2. 分頁容器區域 (透過 JS 切換顯示) -->
-    <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 no-scrollbar">
+    <div class="flex-1 overflow-y-auto px-4 py-4 space-y-5 no-scrollbar">
 
       <!-- ==================== 頁面一：資產建檔 ==================== -->
-      <section id="page-entry" class="space-y-4">
+      <section id="page-entry" class="space-y-5">
         <!-- 即時大數據看板 -->
         <div class="theme-card rounded-2xl p-4 shadow-xl">
-          <div class="flex items-center justify-between mb-3 text-xs text-gray-400 border-b border-[#262626] pb-2">
-            <span class="flex items-center gap-1.5 font-semibold text-gray-300">
-              <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#e28743]"></i> 帳戶即時資產
+          <div class="flex items-center justify-between mb-4 text-xs text-gray-400 border-b border-[#262626] pb-2.5">
+            <span class="flex items-center gap-1.5 font-bold text-gray-300 text-sm">
+              <i data-lucide="wallet" class="w-4 h-4 text-[#e28743]"></i> 帳戶即時資產
             </span>
-            <span id="latest-date-badge" class="text-[10px] bg-[#222] px-2 py-0.5 rounded text-gray-400 font-mono">無數據</span>
+            <span id="latest-date-badge" class="text-xs bg-[#222] px-2.5 py-1 rounded text-gray-300 font-bold font-mono">無數據</span>
           </div>
 
-          <div class="grid grid-cols-3 gap-2 text-center">
-            <div class="border-r border-[#262626] pr-1">
-              <p class="text-[10px] text-gray-500">今日損益</p>
-              <p id="dashboard-today-pnl" class="text-sm font-bold mt-1 text-gray-300">--</p>
-              <p id="dashboard-today-pct" class="text-[10px] mt-0.5 text-gray-500">--</p>
+          <div class="grid grid-cols-3 gap-2 text-center items-center">
+            <div class="border-r border-[#262626] pr-1 py-1">
+              <p class="text-xs text-gray-400 font-bold">今日損益</p>
+              <p id="dashboard-today-pnl" class="text-lg font-black mt-1.5 tracking-tight text-gray-300">--</p>
+              <p id="dashboard-today-pct" class="text-xs font-bold mt-1 text-gray-500">--</p>
             </div>
 
-            <div class="border-r border-[#262626] px-1">
-              <p class="text-[10px] text-gray-500">累積損益</p>
-              <p id="dashboard-cum-pnl" class="text-sm font-bold mt-1 text-gray-300">--</p>
-              <p id="dashboard-cum-pct" class="text-[10px] mt-0.5 text-gray-500">--</p>
+            <div class="border-r border-[#262626] px-1 py-1">
+              <p class="text-xs text-gray-400 font-bold">累積損益</p>
+              <p id="dashboard-cum-pnl" class="text-lg font-black mt-1.5 tracking-tight text-gray-300">--</p>
+              <p id="dashboard-cum-pct" class="text-xs font-bold mt-1 text-gray-500">--</p>
             </div>
 
-            <div class="pl-1">
-              <p class="text-[10px] text-gray-500">股票市值</p>
-              <p id="dashboard-market-val" class="text-sm font-bold mt-1 text-white">--</p>
-              <p id="dashboard-cost" class="text-[9px] mt-1 text-gray-400 font-mono truncate">成本: --</p>
+            <div class="pl-1 py-1">
+              <p class="text-xs text-gray-400 font-bold">股票市值</p>
+              <p id="dashboard-market-val" class="text-lg font-black mt-1.5 tracking-tight text-white">--</p>
+              <p id="dashboard-cost" class="text-xs font-bold mt-1 text-gray-400 font-mono truncate">成本: --</p>
             </div>
           </div>
         </div>
 
         <!-- 每日資產建檔表單 -->
         <div class="theme-card rounded-2xl p-4 shadow-md space-y-4">
-          <div class="border-b border-[#262626] pb-2">
-            <h2 class="text-xs font-bold text-white flex items-center gap-1.5">
-              <i data-lucide="plus-circle" class="w-4 h-4 text-[#e28743]"></i>
+          <div class="border-b border-[#262626] pb-3">
+            <h2 class="text-sm font-black text-white flex items-center gap-1.5">
+              <i data-lucide="plus-circle" class="w-5 h-5 text-[#e28743]"></i>
               新增 / 更新每日帳目
             </h2>
-            <p class="text-[10px] text-gray-500 mt-0.5">若同一天重複輸入，系統將會直接更新該日紀錄。</p>
+            <p class="text-xs text-gray-500 mt-1">若同一天重複輸入，系統將會直接覆蓋更新該日紀錄。</p>
           </div>
 
-          <form id="record-form" onsubmit="handleFormSubmit(event)" class="space-y-3.5">
+          <form id="record-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
             <div>
-              <label class="block text-[11px] text-gray-400 mb-1">日期 *</label>
-              <input type="date" id="input-date" required class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+              <label class="block text-xs font-bold text-gray-300 mb-1.5">日期 *</label>
+              <input type="date" id="input-date" required class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
             </div>
             <div>
-              <label class="block text-[11px] text-gray-400 mb-1 flex justify-between">
+              <label class="block text-xs font-bold text-gray-300 mb-1.5 flex justify-between">
                 <span>今日損益 (元) *</span>
-                <span class="text-[10px] text-gray-500">虧損請輸負號 (-)</span>
+                <span class="text-xs text-gray-500">虧損請輸負號 (-)</span>
               </label>
-              <input type="number" step="any" id="input-today-pnl" required placeholder="例如: 171955" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+              <input type="number" step="any" id="input-today-pnl" required placeholder="例如: 171955" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
             </div>
             <div>
-              <label class="block text-[11px] text-gray-400 mb-1">累積損益 (元) *</label>
-              <input type="number" step="any" id="input-cum-pnl" required placeholder="例如: 2176562" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+              <label class="block text-xs font-bold text-gray-300 mb-1.5">累積損益 (元) *</label>
+              <input type="number" step="any" id="input-cum-pnl" required placeholder="例如: 2176562" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
             </div>
             <div>
-              <label class="block text-[11px] text-gray-400 mb-1">股票市值 (元) *</label>
-              <input type="number" step="any" id="input-market-val" min="0" required placeholder="例如: 7483327" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+              <label class="block text-xs font-bold text-gray-300 mb-1.5">股票市值 (元) *</label>
+              <input type="number" step="any" id="input-market-val" min="0" required placeholder="例如: 7483327" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
             </div>
 
-            <button type="submit" class="w-full mt-2 py-2.5 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] active:scale-[0.98] transition-all text-xs text-black font-extrabold flex items-center justify-center gap-1 shadow-lg shadow-amber-950/20">
-              <i data-lucide="check-circle" class="w-4 h-4 stroke-[2.5]"></i>
+            <button type="submit" class="w-full mt-3 py-3.5 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] active:scale-[0.98] transition-all text-sm text-black font-black flex items-center justify-center gap-1.5 shadow-lg shadow-amber-950/20">
+              <i data-lucide="check-circle" class="w-5 h-5 stroke-[2.5]"></i>
               <span>儲存當日資產紀錄</span>
             </button>
           </form>
@@ -170,32 +170,32 @@
 
 
       <!-- ==================== 頁面二：查詢與篩選 ==================== -->
-      <section id="page-search" class="space-y-4 hidden">
+      <section id="page-search" class="space-y-5 hidden">
         <!-- 篩選面板 -->
-        <div class="theme-card rounded-2xl p-4 shadow-md space-y-3">
-          <div class="flex items-center justify-between border-b border-[#262626] pb-2">
-            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#e28743]"></i>
+        <div class="theme-card rounded-2xl p-4 shadow-md space-y-4">
+          <div class="flex items-center justify-between border-b border-[#262626] pb-3">
+            <h3 class="text-sm font-black text-white flex items-center gap-1.5">
+              <i data-lucide="sliders-horizontal" class="w-5 h-5 text-[#e28743]"></i>
               區間與日期查詢
             </h3>
-            <button onclick="resetFilters()" class="text-[10px] text-gray-400 hover:text-white transition flex items-center gap-0.5">
-              <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重設條件
+            <button onclick="resetFilters()" class="text-xs font-bold text-gray-400 hover:text-white transition flex items-center gap-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 重設條件
             </button>
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-4">
             <div>
-              <label class="block text-[10px] text-gray-500 mb-1">特定單日查詢</label>
-              <input type="date" id="search-single-date" onchange="filterBySingleDate()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+              <label class="block text-xs font-bold text-gray-400 mb-1.5">特定單日查詢</label>
+              <input type="date" id="search-single-date" onchange="filterBySingleDate()" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
             </div>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-[10px] text-gray-500 mb-1">區間起點</label>
-                <input type="date" id="search-start-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+                <label class="block text-xs font-bold text-gray-400 mb-1.5">區間起點</label>
+                <input type="date" id="search-start-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
               </div>
               <div>
-                <label class="block text-[10px] text-gray-500 mb-1">區間終點</label>
-                <input type="date" id="search-end-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+                <label class="block text-xs font-bold text-gray-400 mb-1.5">區間終點</label>
+                <input type="date" id="search-end-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
               </div>
             </div>
           </div>
@@ -203,28 +203,28 @@
 
         <!-- 趨勢圖表展示 -->
         <div class="theme-card rounded-2xl p-4 shadow-md">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-              <span class="w-1.5 h-3 bg-[#e28743] rounded-sm"></span>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold text-white flex items-center gap-1.5 text-sm">
+              <span class="w-1.5 h-3.5 bg-[#e28743] rounded-sm"></span>
               篩選波段損益趨勢 (元)
             </h3>
-            <span class="text-[9px] text-gray-500">左右滑動看歷史</span>
+            <span class="text-xs text-gray-500 font-medium">左右滑動看歷史</span>
           </div>
           
           <!-- 長條圖繪製 -->
           <div class="w-full overflow-x-auto py-2">
-            <div class="min-w-[320px] h-32 relative flex items-end justify-between px-2 border-b border-[#2a2a2a]" id="chart-container">
+            <div class="min-w-[320px] h-36 relative flex items-end justify-between px-2 border-b border-[#2a2a2a]" id="chart-container">
               <!-- 零基準水平中線 -->
               <div class="absolute w-full border-t border-dashed border-[#333333] top-1/2 left-0 pointer-events-none"></div>
               <!-- 動態生成長條 -->
               <div id="chart-bars" class="w-full h-full flex items-end justify-around relative z-10">
-                <div class="absolute inset-0 flex items-center justify-center text-xs text-gray-500">
+                <div class="absolute inset-0 flex items-center justify-center text-sm text-gray-500">
                   尚未載入交易數據
                 </div>
               </div>
             </div>
           </div>
-          <div class="flex justify-between text-[9px] text-gray-500 mt-1 px-1 font-mono">
+          <div class="flex justify-between text-xs text-gray-400 mt-2 px-1 font-mono font-bold">
             <span id="chart-start-date">--</span>
             <span id="chart-end-date">--</span>
           </div>
@@ -233,19 +233,19 @@
 
 
       <!-- ==================== 頁面三：歷史紀錄維護 ==================== -->
-      <section id="page-history" class="space-y-4 hidden">
-        <div class="theme-card rounded-2xl p-4 shadow-md space-y-3">
-          <div class="flex items-center justify-between border-b border-[#262626] pb-2">
-            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-              <i data-lucide="database" class="w-4 h-4 text-[#e28743]"></i>
+      <section id="page-history" class="space-y-5 hidden">
+        <div class="theme-card rounded-2xl p-4 shadow-md space-y-4">
+          <div class="flex items-center justify-between border-b border-[#262626] pb-3">
+            <h3 class="text-sm font-black text-white flex items-center gap-1.5">
+              <i data-lucide="database" class="w-5 h-5 text-[#e28743]"></i>
               記帳明細與維護管理
             </h3>
-            <span id="record-count" class="text-[10px] bg-[#222] px-2.5 py-0.5 rounded-full text-gray-400 font-mono">共 0 筆</span>
+            <span id="record-count" class="text-xs font-bold bg-[#222] px-3 py-1 rounded-full text-gray-300 font-mono">共 0 筆</span>
           </div>
 
           <!-- 歷史列表明細 -->
-          <div class="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1 no-scrollbar" id="records-list">
-            <div class="text-center py-12 text-gray-500 text-xs">
+          <div class="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1 no-scrollbar" id="records-list">
+            <div class="text-center py-12 text-gray-500 text-sm">
               數據撈取中...
             </div>
           </div>
@@ -255,41 +255,41 @@
     </div>
 
     <!-- 3. 仿原生 APP 底部導覽列 -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-[#262626] py-2 px-6 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-[#262626] py-3 px-6 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
       <!-- 導覽按鈕 1：建檔 -->
-      <button onclick="switchTab('entry')" id="btn-nav-entry" class="flex flex-col items-center gap-1 nav-active transition-all duration-200 active:scale-90">
-        <i data-lucide="plus-circle" class="w-5.5 h-5.5"></i>
-        <span class="text-[10px] font-bold">每日建檔</span>
+      <button onclick="switchTab('entry')" id="btn-nav-entry" class="flex flex-col items-center gap-1.5 nav-active transition-all duration-200 active:scale-90">
+        <i data-lucide="plus-circle" class="w-6 h-6"></i>
+        <span class="text-xs font-extrabold">每日建檔</span>
       </button>
       
       <!-- 導覽按鈕 2：查詢與篩選 -->
-      <button onclick="switchTab('search')" id="btn-nav-search" class="flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90">
-        <i data-lucide="search" class="w-5.5 h-5.5"></i>
-        <span class="text-[10px] font-bold">資產查詢</span>
+      <button onclick="switchTab('search')" id="btn-nav-search" class="flex flex-col items-center gap-1.5 nav-inactive transition-all duration-200 active:scale-90">
+        <i data-lucide="search" class="w-6 h-6"></i>
+        <span class="text-xs font-extrabold">資產查詢</span>
       </button>
       
       <!-- 導覽按鈕 3：歷史紀錄維護 -->
-      <button onclick="switchTab('history')" id="btn-nav-history" class="flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90">
-        <i data-lucide="database" class="w-5.5 h-5.5"></i>
-        <span class="text-[10px] font-bold">明細維護</span>
+      <button onclick="switchTab('history')" id="btn-nav-history" class="flex flex-col items-center gap-1.5 nav-inactive transition-all duration-200 active:scale-90">
+        <i data-lucide="database" class="w-6 h-6"></i>
+        <span class="text-xs font-extrabold">明細維護</span>
       </button>
     </nav>
 
     <!-- 4. 暗黑質感自訂「刪除確認對話框」 (取代原生 confirm) -->
     <div id="delete-confirm-dialog" class="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-6 hidden">
-      <div class="theme-card w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl p-5 border border-red-900/30 text-center space-y-4">
-        <div class="w-12 h-12 rounded-full bg-red-950/40 border border-red-500/30 flex items-center justify-center mx-auto text-red-500">
-          <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      <div class="theme-card w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl p-6 border border-red-900/30 text-center space-y-4">
+        <div class="w-14 h-14 rounded-full bg-red-950/40 border border-red-500/30 flex items-center justify-center mx-auto text-red-500">
+          <i data-lucide="alert-triangle" class="w-7 h-7"></i>
         </div>
         <div>
-          <h4 class="text-sm font-bold text-white">確定要刪除此筆紀錄嗎？</h4>
-          <p class="text-[11px] text-gray-400 mt-1">您即將刪除 <span id="delete-target-date" class="font-bold text-gray-200 font-mono"></span> 的盈虧數據，此動作無法還原！</p>
+          <h4 class="text-base font-black text-white">確定要刪除此筆紀錄嗎？</h4>
+          <p class="text-xs text-gray-300 mt-2 leading-relaxed">您即將刪除 <span id="delete-target-date" class="font-extrabold text-gray-100 font-mono text-sm bg-[#222] px-1.5 py-0.5 rounded"></span> 的盈虧數據，此動作無法還原！</p>
         </div>
-        <div class="flex items-center space-x-2.5 pt-1">
-          <button onclick="closeDeleteDialog()" class="w-1/2 py-2 rounded-xl bg-[#262626] border border-[#333] text-xs text-gray-300 hover:bg-[#333] transition-colors">
+        <div class="flex items-center space-x-3 pt-2">
+          <button onclick="closeDeleteDialog()" class="w-1/2 py-3 rounded-xl bg-[#262626] border border-[#333] text-sm text-gray-200 font-bold hover:bg-[#333] transition-colors">
             取消
           </button>
-          <button id="btn-confirm-delete-action" class="w-1/2 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-xs text-white font-bold transition-colors">
+          <button id="btn-confirm-delete-action" class="w-1/2 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-sm text-white font-black transition-colors">
             確定刪除
           </button>
         </div>
@@ -299,38 +299,38 @@
     <!-- 5. 歷史紀錄「修改」獨立 Modal 彈窗 -->
     <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="theme-card w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl">
-        <div class="bg-[#1e1e1e] px-4 py-3 border-b border-[#2a2a2a] flex items-center justify-between">
-          <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-            <i data-lucide="edit-3" class="w-4 h-4 text-[#e28743]"></i>
+        <div class="bg-[#1e1e1e] px-4 py-3.5 border-b border-[#2a2a2a] flex items-center justify-between">
+          <h3 class="text-sm font-black text-white flex items-center gap-1.5">
+            <i data-lucide="edit-3" class="w-4.5 h-4.5 text-[#e28743]"></i>
             修改歷史紀錄
           </h3>
           <button onclick="closeEditModal()" class="text-gray-400 hover:text-white">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <i data-lucide="x" class="w-6 h-6"></i>
           </button>
         </div>
-        <form id="edit-form" onsubmit="handleEditFormSubmit(event)" class="p-4 space-y-3.5">
+        <form id="edit-form" onsubmit="handleEditFormSubmit(event)" class="p-4 space-y-4">
           <div>
-            <label class="block text-[10px] text-gray-400 mb-1">日期（不可變更）</label>
-            <input type="date" id="edit-date" disabled class="theme-input w-full rounded-xl px-3 py-1.5 text-xs opacity-55">
+            <label class="block text-xs font-bold text-gray-400 mb-1.5">日期（不可變更）</label>
+            <input type="date" id="edit-date" disabled class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold opacity-55">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 mb-1">今日損益 (元) *</label>
-            <input type="number" step="any" id="edit-today-pnl" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+            <label class="block text-xs font-bold text-gray-400 mb-1.5">今日損益 (元) *</label>
+            <input type="number" step="any" id="edit-today-pnl" required class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 mb-1">累積損益 (元) *</label>
-            <input type="number" step="any" id="edit-cum-pnl" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+            <label class="block text-xs font-bold text-gray-400 mb-1.5">累積損益 (元) *</label>
+            <input type="number" step="any" id="edit-cum-pnl" required class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
           </div>
           <div>
-            <label class="block text-[10px] text-gray-400 mb-1">股票市值 (元) *</label>
-            <input type="number" step="any" id="edit-market-val" min="0" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+            <label class="block text-xs font-bold text-gray-400 mb-1.5">股票市值 (元) *</label>
+            <input type="number" step="any" id="edit-market-val" min="0" required class="theme-input w-full rounded-xl px-4 py-2.5 text-sm font-semibold">
           </div>
 
-          <div class="flex items-center space-x-2 pt-2">
-            <button type="button" onclick="closeEditModal()" class="w-1/2 py-2 rounded-xl border border-[#333] text-xs text-gray-300 hover:bg-[#222]">
+          <div class="flex items-center space-x-3 pt-2">
+            <button type="button" onclick="closeEditModal()" class="w-1/2 py-2.5 rounded-xl border border-[#333] text-xs font-bold text-gray-300 hover:bg-[#222]">
               取消
             </button>
-            <button type="submit" class="w-1/2 py-2 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] text-xs text-black font-bold">
+            <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] text-xs text-black font-black">
               更新資料
             </button>
           </div>
@@ -339,9 +339,9 @@
     </div>
 
     <!-- 6. 頂部漂浮 Toast 提示器 -->
-    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[#222] text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl border border-[#333] opacity-0 transition-opacity duration-300 pointer-events-none z-[100] flex items-center gap-1.5">
-      <i data-lucide="check" id="toast-icon" class="w-4 h-4 text-[#e28743]"></i>
-      <span id="toast-msg">提示</span>
+    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-[#222] text-white text-sm px-5 py-3 rounded-xl shadow-2xl border border-[#333] opacity-0 transition-opacity duration-300 pointer-events-none z-[100] flex items-center gap-2">
+      <i data-lucide="check" id="toast-icon" class="w-4.5 h-4.5 text-[#e28743]"></i>
+      <span id="toast-msg" class="font-bold">提示</span>
     </div>
 
   </div>
@@ -394,6 +394,7 @@
       });
     }
 
+    // 新增、變更
     function saveRecordToDB(record) {
       return new Promise((resolve, reject) => {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
@@ -405,6 +406,7 @@
       });
     }
 
+    // 刪除
     function deleteRecordFromDB(date) {
       return new Promise((resolve, reject) => {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
@@ -462,9 +464,9 @@
       tabs.forEach(t => {
         const btn = document.getElementById(`btn-nav-${t}`);
         if (t === tabName) {
-          btn.className = "flex flex-col items-center gap-1 nav-active transition-all duration-200 active:scale-90";
+          btn.className = "flex flex-col items-center gap-1.5 nav-active transition-all duration-200 active:scale-90";
         } else {
-          btn.className = "flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90";
+          btn.className = "flex flex-col items-center gap-1.5 nav-inactive transition-all duration-200 active:scale-90";
         }
       });
 
@@ -546,13 +548,13 @@
 
       if (allRecords.length === 0) {
         todayPnlEl.textContent = '--';
-        todayPnlEl.className = "text-sm font-bold mt-1 text-gray-400";
+        todayPnlEl.className = "text-lg font-black mt-1.5 text-gray-400";
         todayPctEl.textContent = '--';
-        todayPctEl.className = "text-[10px] mt-0.5 text-gray-500";
+        todayPctEl.className = "text-xs font-bold mt-1 text-gray-500";
         cumPnlEl.textContent = '--';
-        cumPnlEl.className = "text-sm font-bold mt-1 text-gray-400";
+        cumPnlEl.className = "text-lg font-black mt-1.5 text-gray-400";
         cumPctEl.textContent = '--';
-        cumPctEl.className = "text-[10px] mt-0.5 text-gray-500";
+        cumPctEl.className = "text-xs font-bold mt-1 text-gray-500";
         marketValEl.textContent = '--';
         costEl.textContent = '成本: --';
         dateBadge.textContent = '暫無資料';
@@ -570,9 +572,9 @@
       const tPct = costToday > 0 ? (tPnl / costToday) * 100 : 0;
 
       todayPnlEl.textContent = (tPnl >= 0 ? '+' : '') + formatNumber(tPnl);
-      todayPnlEl.className = `text-sm font-bold mt-1 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      todayPnlEl.className = `text-lg font-black mt-1.5 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
       todayPctEl.textContent = formatPercent(tPct);
-      todayPctEl.className = `text-[10px] mt-0.5 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      todayPctEl.className = `text-xs font-bold mt-1 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
 
       // 2. 累積損益及總報酬率
       const cPnl = latest.cumulativePnL;
@@ -580,9 +582,9 @@
       const cPct = totalCost > 0 ? (cPnl / totalCost) * 100 : 0;
 
       cumPnlEl.textContent = (cPnl >= 0 ? '+' : '') + formatNumber(cPnl);
-      cumPnlEl.className = `text-sm font-bold mt-1 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      cumPnlEl.className = `text-lg font-black mt-1.5 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
       cumPctEl.textContent = formatPercent(cPct);
-      cumPctEl.className = `text-[10px] mt-0.5 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      cumPctEl.className = `text-xs font-bold mt-1 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
 
       // 3. 股票市值與成本
       marketValEl.textContent = formatNumber(latest.marketValue);
@@ -626,10 +628,10 @@
         return `
           <div class="group relative flex-1 flex flex-col items-center h-full mx-0.5 cursor-pointer">
             <div class="absolute inset-0 z-20"></div>
-            <div class="absolute w-2 rounded-sm transition-all group-hover:brightness-125" style="${barStyle}"></div>
-            <div class="pointer-events-none absolute bottom-full mb-1.5 hidden group-hover:flex flex-col items-center bg-[#1f1f1f] border border-[#333] text-[9px] p-2 rounded shadow-2xl z-50 min-w-[80px]">
-              <span class="text-white font-semibold font-mono">${d.date}</span>
-              <span class="${tooltipColor} mt-0.5 font-bold font-mono">${d.todayPnL >= 0 ? '+' : ''}${formatNumber(d.todayPnL)}</span>
+            <div class="absolute w-2.5 rounded-sm transition-all group-hover:brightness-125" style="${barStyle}"></div>
+            <div class="pointer-events-none absolute bottom-full mb-1.5 hidden group-hover:flex flex-col items-center bg-[#1f1f1f] border border-[#333] text-xs p-2.5 rounded shadow-2xl z-50 min-w-[90px]">
+              <span class="text-white font-bold font-mono">${d.date}</span>
+              <span class="${tooltipColor} mt-1 font-black font-mono">${d.todayPnL >= 0 ? '+' : ''}${formatNumber(d.todayPnL)}</span>
             </div>
           </div>
         `;
@@ -645,8 +647,8 @@
 
       if (filteredRecords.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-gray-500 text-xs flex flex-col items-center justify-center gap-2">
-            <i data-lucide="info" class="w-8 h-8 text-gray-600"></i>
+          <div class="text-center py-12 text-gray-500 text-sm flex flex-col items-center justify-center gap-2">
+            <i data-lucide="info" class="w-9 h-9 text-gray-600"></i>
             沒有找到相符的資產數據明細
           </div>
         `;
@@ -660,41 +662,41 @@
         const totalCost = item.marketValue - item.cumulativePnL;
 
         return `
-          <div class="theme-card rounded-xl p-3 text-xs flex flex-col space-y-2 border border-[#262626] hover:border-[#383838] transition-colors">
-            <div class="flex items-center justify-between border-b border-[#222] pb-1.5">
-              <span class="font-bold text-white flex items-center gap-1 font-mono text-[11px]">
-                <i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-500"></i> ${item.date}
+          <div class="theme-card rounded-xl p-4 text-sm flex flex-col space-y-3 border border-[#262626] hover:border-[#383838] transition-colors">
+            <div class="flex items-center justify-between border-b border-[#222] pb-2">
+              <span class="font-extrabold text-white flex items-center gap-1 font-mono text-sm">
+                <i data-lucide="calendar" class="w-4 h-4 text-[#e28743]"></i> ${item.date}
               </span>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-3">
                 <button onclick="openEditModal('${item.date}')" class="text-[#e28743] hover:text-white transition p-1" title="修改數據">
-                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="edit-2" class="w-4 h-4"></i>
                 </button>
                 <button onclick="openDeleteDialog('${item.date}')" class="text-red-400 hover:text-red-300 transition p-1" title="刪除數據">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+            <div class="grid grid-cols-3 gap-2 text-xs">
               <div>
-                <p class="text-gray-500">今日盈虧</p>
-                <p class="font-bold mt-0.5 ${isUpToday ? 'stock-up' : 'stock-down'}">
+                <p class="text-gray-400 font-bold">今日盈虧</p>
+                <p class="font-black mt-1 text-sm ${isUpToday ? 'stock-up' : 'stock-down'}">
                   ${isUpToday ? '+' : ''}${formatNumber(item.todayPnL)}
                 </p>
               </div>
               <div>
-                <p class="text-gray-500">累積盈虧</p>
-                <p class="font-bold mt-0.5 ${isUpCum ? 'stock-up' : 'stock-down'}">
+                <p class="text-gray-400 font-bold">累積盈虧</p>
+                <p class="font-black mt-1 text-sm ${isUpCum ? 'stock-up' : 'stock-down'}">
                   ${isUpCum ? '+' : ''}${formatNumber(item.cumulativePnL)}
                 </p>
               </div>
               <div>
-                <p class="text-gray-500">股票市值</p>
-                <p class="font-bold mt-0.5 text-gray-200">${formatNumber(item.marketValue)}</p>
+                <p class="text-gray-400 font-bold">股票市值</p>
+                <p class="font-black mt-1 text-sm text-gray-200">${formatNumber(item.marketValue)}</p>
               </div>
             </div>
 
-            <div class="text-[9px] text-gray-500 flex justify-between pt-1 border-t border-[#222]">
+            <div class="text-xs text-gray-400 flex justify-between pt-1.5 border-t border-[#222] font-semibold">
               <span class="font-mono">推算持股成本: ${formatNumber(totalCost)}</span>
             </div>
           </div>
