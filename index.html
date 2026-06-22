@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>股票每日盈虧記帳 APP</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* 全域暗色調美化 */
+    body {
+      background-color: #0b0b0b;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    /* RWD 專屬高質感手機容器（在電腦上置中，手機上全螢幕） */
+    .app-container {
+      background-color: #121212;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    .theme-card {
+      background-color: #1a1a1a;
+      border: 1px solid #262626;
+    }
+
+    .theme-input {
+      background-color: #222222;
+      border: 1px solid #2d2d2d;
+      color: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .theme-input:focus {
+      border-color: #e28743;
+      background-color: #282828;
+      outline: none;
+    }
+
+    /* 台灣股市經典配色：正數紅、負數綠 */
+    .stock-up {
+      color: #ff4d4d;
+    }
+    .stock-down {
+      color: #00cc66;
+    }
+    .stock-up-bg {
+      background-color: rgba(255, 77, 77, 0.1);
+    }
+    .stock-down-bg {
+      background-color: rgba(0, 204, 102, 0.1);
+    }
+
+    /* 隱藏捲軸但保留滾動功能 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 底部導覽點選效果 */
+    .nav-active {
+      color: #e28743 !important;
+      transform: scale(1.05);
+    }
+    .nav-inactive {
+      color: #737373;
+    }
+  </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+
+  <!-- RWD APP 容器核心 -->
+  <div class="app-container w-full max-w-md min-h-screen flex flex-col relative pb-20">
+    
+    <!-- 1. 頂部 APP 標頭 -->
+    <header class="bg-[#1a1a1a] border-b border-[#262626] sticky top-0 z-40 px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#e28743] to-[#ff9f59] flex items-center justify-center shadow-lg shadow-amber-950/40">
+          <i data-lucide="line-chart" class="w-4.5 h-4.5 text-black stroke-[2.5]"></i>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-white tracking-wide">投資損益隨身帳</h1>
+          <p class="text-[9px] text-gray-500 uppercase tracking-widest">IndexedDB Offline Sandbox</p>
+        </div>
+      </div>
+      <span class="text-[10px] font-semibold text-gray-400 bg-[#262626] px-2 py-1 rounded-md border border-[#333]">
+        台股配色 📈
+      </span>
+    </header>
+
+    <!-- 2. 分頁容器區域 (透過 JS 切換顯示) -->
+    <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 no-scrollbar">
+
+      <!-- ==================== 頁面一：資產建檔 ==================== -->
+      <section id="page-entry" class="space-y-4">
+        <!-- 即時大數據看板 -->
+        <div class="theme-card rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-3 text-xs text-gray-400 border-b border-[#262626] pb-2">
+            <span class="flex items-center gap-1.5 font-semibold text-gray-300">
+              <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#e28743]"></i> 帳戶即時資產
+            </span>
+            <span id="latest-date-badge" class="text-[10px] bg-[#222] px-2 py-0.5 rounded text-gray-400 font-mono">無數據</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="border-r border-[#262626] pr-1">
+              <p class="text-[10px] text-gray-500">今日損益</p>
+              <p id="dashboard-today-pnl" class="text-sm font-bold mt-1 text-gray-300">--</p>
+              <p id="dashboard-today-pct" class="text-[10px] mt-0.5 text-gray-500">--</p>
+            </div>
+
+            <div class="border-r border-[#262626] px-1">
+              <p class="text-[10px] text-gray-500">累積損益</p>
+              <p id="dashboard-cum-pnl" class="text-sm font-bold mt-1 text-gray-300">--</p>
+              <p id="dashboard-cum-pct" class="text-[10px] mt-0.5 text-gray-500">--</p>
+            </div>
+
+            <div class="pl-1">
+              <p class="text-[10px] text-gray-500">股票市值</p>
+              <p id="dashboard-market-val" class="text-sm font-bold mt-1 text-white">--</p>
+              <p id="dashboard-cost" class="text-[9px] mt-1 text-gray-400 font-mono truncate">成本: --</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 每日資產建檔表單 -->
+        <div class="theme-card rounded-2xl p-4 shadow-md space-y-4">
+          <div class="border-b border-[#262626] pb-2">
+            <h2 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-[#e28743]"></i>
+              新增 / 更新每日帳目
+            </h2>
+            <p class="text-[10px] text-gray-500 mt-0.5">若同一天重複輸入，系統將會直接更新該日紀錄。</p>
+          </div>
+
+          <form id="record-form" onsubmit="handleFormSubmit(event)" class="space-y-3.5">
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">日期 *</label>
+              <input type="date" id="input-date" required class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1 flex justify-between">
+                <span>今日損益 (元) *</span>
+                <span class="text-[10px] text-gray-500">虧損請輸負號 (-)</span>
+              </label>
+              <input type="number" step="any" id="input-today-pnl" required placeholder="例如: 171955" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">累積損益 (元) *</label>
+              <input type="number" step="any" id="input-cum-pnl" required placeholder="例如: 2176562" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] text-gray-400 mb-1">股票市值 (元) *</label>
+              <input type="number" step="any" id="input-market-val" min="0" required placeholder="例如: 7483327" class="theme-input w-full rounded-xl px-3 py-2 text-xs">
+            </div>
+
+            <button type="submit" class="w-full mt-2 py-2.5 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] active:scale-[0.98] transition-all text-xs text-black font-extrabold flex items-center justify-center gap-1 shadow-lg shadow-amber-950/20">
+              <i data-lucide="check-circle" class="w-4 h-4 stroke-[2.5]"></i>
+              <span>儲存當日資產紀錄</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+
+      <!-- ==================== 頁面二：查詢與篩選 ==================== -->
+      <section id="page-search" class="space-y-4 hidden">
+        <!-- 篩選面板 -->
+        <div class="theme-card rounded-2xl p-4 shadow-md space-y-3">
+          <div class="flex items-center justify-between border-b border-[#262626] pb-2">
+            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#e28743]"></i>
+              區間與日期查詢
+            </h3>
+            <button onclick="resetFilters()" class="text-[10px] text-gray-400 hover:text-white transition flex items-center gap-0.5">
+              <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重設條件
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[10px] text-gray-500 mb-1">特定單日查詢</label>
+              <input type="date" id="search-single-date" onchange="filterBySingleDate()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] text-gray-500 mb-1">區間起點</label>
+                <input type="date" id="search-start-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 mb-1">區間終點</label>
+                <input type="date" id="search-end-date" onchange="filterByRange()" class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 趨勢圖表展示 -->
+        <div class="theme-card rounded-2xl p-4 shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <span class="w-1.5 h-3 bg-[#e28743] rounded-sm"></span>
+              篩選波段損益趨勢 (元)
+            </h3>
+            <span class="text-[9px] text-gray-500">左右滑動看歷史</span>
+          </div>
+          
+          <!-- 長條圖繪製 -->
+          <div class="w-full overflow-x-auto py-2">
+            <div class="min-w-[320px] h-32 relative flex items-end justify-between px-2 border-b border-[#2a2a2a]" id="chart-container">
+              <!-- 零基準水平中線 -->
+              <div class="absolute w-full border-t border-dashed border-[#333333] top-1/2 left-0 pointer-events-none"></div>
+              <!-- 動態生成長條 -->
+              <div id="chart-bars" class="w-full h-full flex items-end justify-around relative z-10">
+                <div class="absolute inset-0 flex items-center justify-center text-xs text-gray-500">
+                  尚未載入交易數據
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-between text-[9px] text-gray-500 mt-1 px-1 font-mono">
+            <span id="chart-start-date">--</span>
+            <span id="chart-end-date">--</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== 頁面三：歷史紀錄維護 ==================== -->
+      <section id="page-history" class="space-y-4 hidden">
+        <div class="theme-card rounded-2xl p-4 shadow-md space-y-3">
+          <div class="flex items-center justify-between border-b border-[#262626] pb-2">
+            <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="database" class="w-4 h-4 text-[#e28743]"></i>
+              記帳明細與維護管理
+            </h3>
+            <span id="record-count" class="text-[10px] bg-[#222] px-2.5 py-0.5 rounded-full text-gray-400 font-mono">共 0 筆</span>
+          </div>
+
+          <!-- 歷史列表明細 -->
+          <div class="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1 no-scrollbar" id="records-list">
+            <div class="text-center py-12 text-gray-500 text-xs">
+              數據撈取中...
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 3. 仿原生 APP 底部導覽列 -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-[#262626] py-2 px-6 flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
+      <!-- 導覽按鈕 1：建檔 -->
+      <button onclick="switchTab('entry')" id="btn-nav-entry" class="flex flex-col items-center gap-1 nav-active transition-all duration-200 active:scale-90">
+        <i data-lucide="plus-circle" class="w-5.5 h-5.5"></i>
+        <span class="text-[10px] font-bold">每日建檔</span>
+      </button>
+      
+      <!-- 導覽按鈕 2：查詢與篩選 -->
+      <button onclick="switchTab('search')" id="btn-nav-search" class="flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90">
+        <i data-lucide="search" class="w-5.5 h-5.5"></i>
+        <span class="text-[10px] font-bold">資產查詢</span>
+      </button>
+      
+      <!-- 導覽按鈕 3：歷史紀錄維護 -->
+      <button onclick="switchTab('history')" id="btn-nav-history" class="flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90">
+        <i data-lucide="database" class="w-5.5 h-5.5"></i>
+        <span class="text-[10px] font-bold">明細維護</span>
+      </button>
+    </nav>
+
+    <!-- 4. 暗黑質感自訂「刪除確認對話框」 (取代原生 confirm) -->
+    <div id="delete-confirm-dialog" class="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-6 hidden">
+      <div class="theme-card w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl p-5 border border-red-900/30 text-center space-y-4">
+        <div class="w-12 h-12 rounded-full bg-red-950/40 border border-red-500/30 flex items-center justify-center mx-auto text-red-500">
+          <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-white">確定要刪除此筆紀錄嗎？</h4>
+          <p class="text-[11px] text-gray-400 mt-1">您即將刪除 <span id="delete-target-date" class="font-bold text-gray-200 font-mono"></span> 的盈虧數據，此動作無法還原！</p>
+        </div>
+        <div class="flex items-center space-x-2.5 pt-1">
+          <button onclick="closeDeleteDialog()" class="w-1/2 py-2 rounded-xl bg-[#262626] border border-[#333] text-xs text-gray-300 hover:bg-[#333] transition-colors">
+            取消
+          </button>
+          <button id="btn-confirm-delete-action" class="w-1/2 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-xs text-white font-bold transition-colors">
+            確定刪除
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 歷史紀錄「修改」獨立 Modal 彈窗 -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="theme-card w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl">
+        <div class="bg-[#1e1e1e] px-4 py-3 border-b border-[#2a2a2a] flex items-center justify-between">
+          <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i data-lucide="edit-3" class="w-4 h-4 text-[#e28743]"></i>
+            修改歷史紀錄
+          </h3>
+          <button onclick="closeEditModal()" class="text-gray-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <form id="edit-form" onsubmit="handleEditFormSubmit(event)" class="p-4 space-y-3.5">
+          <div>
+            <label class="block text-[10px] text-gray-400 mb-1">日期（不可變更）</label>
+            <input type="date" id="edit-date" disabled class="theme-input w-full rounded-xl px-3 py-1.5 text-xs opacity-55">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-400 mb-1">今日損益 (元) *</label>
+            <input type="number" step="any" id="edit-today-pnl" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-400 mb-1">累積損益 (元) *</label>
+            <input type="number" step="any" id="edit-cum-pnl" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+          </div>
+          <div>
+            <label class="block text-[10px] text-gray-400 mb-1">股票市值 (元) *</label>
+            <input type="number" step="any" id="edit-market-val" min="0" required class="theme-input w-full rounded-xl px-3 py-1.5 text-xs">
+          </div>
+
+          <div class="flex items-center space-x-2 pt-2">
+            <button type="button" onclick="closeEditModal()" class="w-1/2 py-2 rounded-xl border border-[#333] text-xs text-gray-300 hover:bg-[#222]">
+              取消
+            </button>
+            <button type="submit" class="w-1/2 py-2 rounded-xl bg-[#e28743] hover:bg-[#ff9f59] text-xs text-black font-bold">
+              更新資料
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. 頂部漂浮 Toast 提示器 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[#222] text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl border border-[#333] opacity-0 transition-opacity duration-300 pointer-events-none z-[100] flex items-center gap-1.5">
+      <i data-lucide="check" id="toast-icon" class="w-4 h-4 text-[#e28743]"></i>
+      <span id="toast-msg">提示</span>
+    </div>
+
+  </div>
+
+  <!-- JavaScript 與儲存邏輯控制器 -->
+  <script>
+    // --- 1. IndexedDB 資料庫控制層 ---
+    const DB_NAME = 'StockProfitLossRWD_DB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'daily_records';
+    let db = null;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onerror = (event) => {
+          console.error("IndexedDB 打開失敗:", event.target.error);
+          showToast("資料庫啟動失敗，請確認瀏覽器權限設定。", "alert-triangle");
+          reject(event.target.error);
+        };
+
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          resolve(db);
+        };
+
+        request.onupgradeneeded = (event) => {
+          const dbInstance = event.target.result;
+          if (!dbInstance.objectStoreNames.contains(STORE_NAME)) {
+            dbInstance.createObjectStore(STORE_NAME, { keyPath: 'date' });
+          }
+        };
+      });
+    }
+
+    function getAllRecordsFromDB() {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.getAll();
+
+        request.onsuccess = (event) => {
+          // 依日期由新到舊排序
+          const sorted = event.target.result.sort((a, b) => b.date.localeCompare(a.date));
+          resolve(sorted);
+        };
+
+        request.onerror = (event) => reject(event.target.error);
+      });
+    }
+
+    function saveRecordToDB(record) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.put(record);
+
+        request.onsuccess = () => resolve(true);
+        request.onerror = (event) => reject(event.target.error);
+      });
+    }
+
+    function deleteRecordFromDB(date) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.delete(date);
+
+        request.onsuccess = () => resolve(true);
+        request.onerror = (event) => reject(event.target.error);
+      });
+    }
+
+    // --- 2. 狀態管理 ---
+    let allRecords = [];       // 所有原始歷史資料
+    let filteredRecords = [];  // 當前篩選出的資料
+    let currentTab = 'entry';  // 目前對應的導覽分頁
+    let deletePendingDate = null; // 當前等待被確認刪除的日期
+
+    // 啟動流程
+    window.addEventListener('DOMContentLoaded', async () => {
+      // 預設表單日期為今日
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('input-date').value = todayStr;
+
+      try {
+        await initDB();
+        await loadAndRender();
+        switchTab('entry'); // 預設留在第一分頁
+      } catch (err) {
+        console.error("APP 初始化失敗:", err);
+      }
+    });
+
+    // 重新載入並渲染所有 UI 頁面
+    async function loadAndRender() {
+      allRecords = await getAllRecordsFromDB();
+      applyFilters();
+    }
+
+    // --- 3. 底部選單切換 (Page Routing) ---
+    function switchTab(tabName) {
+      currentTab = tabName;
+
+      // 隱藏全部頁面
+      document.getElementById('page-entry').classList.add('hidden');
+      document.getElementById('page-search').classList.add('hidden');
+      document.getElementById('page-history').classList.add('hidden');
+
+      // 顯示目標頁面
+      if (tabName === 'entry') document.getElementById('page-entry').classList.remove('hidden');
+      if (tabName === 'search') document.getElementById('page-search').classList.remove('hidden');
+      if (tabName === 'history') document.getElementById('page-history').classList.remove('hidden');
+
+      // 更新按鈕 active / inactive 樣式
+      const tabs = ['entry', 'search', 'history'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`btn-nav-${t}`);
+        if (t === tabName) {
+          btn.className = "flex flex-col items-center gap-1 nav-active transition-all duration-200 active:scale-90";
+        } else {
+          btn.className = "flex flex-col items-center gap-1 nav-inactive transition-all duration-200 active:scale-90";
+        }
+      });
+
+      // 當切換到查詢或維護頁面時，動態重新整理該頁圖表或清單
+      if (tabName === 'search') {
+        renderChart();
+      }
+      if (tabName === 'history') {
+        renderRecordsList();
+      }
+    }
+
+    // --- 4. 篩選機制 ---
+    function applyFilters() {
+      const singleDate = document.getElementById('search-single-date').value;
+      const startDate = document.getElementById('search-start-date').value;
+      const endDate = document.getElementById('search-end-date').value;
+
+      if (singleDate) {
+        filteredRecords = allRecords.filter(r => r.date === singleDate);
+      } else if (startDate || endDate) {
+        filteredRecords = allRecords.filter(r => {
+          let keep = true;
+          if (startDate && r.date < startDate) keep = false;
+          if (endDate && r.date > endDate) keep = false;
+          return keep;
+        });
+      } else {
+        filteredRecords = [...allRecords];
+      }
+
+      renderDashboard();
+      if (currentTab === 'search') renderChart();
+      if (currentTab === 'history') renderRecordsList();
+    }
+
+    function filterBySingleDate() {
+      document.getElementById('search-start-date').value = '';
+      document.getElementById('search-end-date').value = '';
+      applyFilters();
+    }
+
+    function filterByRange() {
+      document.getElementById('search-single-date').value = '';
+      applyFilters();
+    }
+
+    function resetFilters() {
+      document.getElementById('search-single-date').value = '';
+      document.getElementById('search-start-date').value = '';
+      document.getElementById('search-end-date').value = '';
+      applyFilters();
+      showToast("查詢條件已重設", "rotate-ccw");
+    }
+
+    // --- 5. 數據格式化函數 ---
+    function formatNumber(num) {
+      if (num === undefined || num === null || isNaN(num)) return '--';
+      return new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 2 }).format(num);
+    }
+
+    function formatPercent(num) {
+      if (num === undefined || num === null || isNaN(num)) return '--';
+      const prefix = num >= 0 ? '+' : '';
+      return `${prefix}${num.toFixed(2)}%`;
+    }
+
+    // --- 6. 介面渲染工程 ---
+
+    // 渲染建檔頁頂部即時看盤 dashboard
+    function renderDashboard() {
+      const todayPnlEl = document.getElementById('dashboard-today-pnl');
+      const todayPctEl = document.getElementById('dashboard-today-pct');
+      const cumPnlEl = document.getElementById('dashboard-cum-pnl');
+      const cumPctEl = document.getElementById('dashboard-cum-pct');
+      const marketValEl = document.getElementById('dashboard-market-val');
+      const costEl = document.getElementById('dashboard-cost');
+      const dateBadge = document.getElementById('latest-date-badge');
+
+      if (allRecords.length === 0) {
+        todayPnlEl.textContent = '--';
+        todayPnlEl.className = "text-sm font-bold mt-1 text-gray-400";
+        todayPctEl.textContent = '--';
+        todayPctEl.className = "text-[10px] mt-0.5 text-gray-500";
+        cumPnlEl.textContent = '--';
+        cumPnlEl.className = "text-sm font-bold mt-1 text-gray-400";
+        cumPctEl.textContent = '--';
+        cumPctEl.className = "text-[10px] mt-0.5 text-gray-500";
+        marketValEl.textContent = '--';
+        costEl.textContent = '成本: --';
+        dateBadge.textContent = '暫無資料';
+        return;
+      }
+
+      // 預設展現最新的帳目數據
+      const latest = allRecords[0];
+      const todayStr = new Date().toISOString().split('T')[0];
+      dateBadge.textContent = latest.date === todayStr ? '今日最新' : latest.date;
+
+      // 1. 今日損益及趴數
+      const tPnl = latest.todayPnL;
+      const costToday = latest.marketValue - tPnl;
+      const tPct = costToday > 0 ? (tPnl / costToday) * 100 : 0;
+
+      todayPnlEl.textContent = (tPnl >= 0 ? '+' : '') + formatNumber(tPnl);
+      todayPnlEl.className = `text-sm font-bold mt-1 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      todayPctEl.textContent = formatPercent(tPct);
+      todayPctEl.className = `text-[10px] mt-0.5 ${tPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      // 2. 累積損益及總報酬率
+      const cPnl = latest.cumulativePnL;
+      const totalCost = latest.marketValue - cPnl;
+      const cPct = totalCost > 0 ? (cPnl / totalCost) * 100 : 0;
+
+      cumPnlEl.textContent = (cPnl >= 0 ? '+' : '') + formatNumber(cPnl);
+      cumPnlEl.className = `text-sm font-bold mt-1 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+      cumPctEl.textContent = formatPercent(cPct);
+      cumPctEl.className = `text-[10px] mt-0.5 ${cPnl >= 0 ? 'stock-up' : 'stock-down'}`;
+
+      // 3. 股票市值與成本
+      marketValEl.textContent = formatNumber(latest.marketValue);
+      costEl.textContent = `成本: ${formatNumber(totalCost)}`;
+    }
+
+    // 渲染頁面二的歷史趨勢波動圖
+    function renderChart() {
+      const barsContainer = document.getElementById('chart-bars');
+      const startEl = document.getElementById('chart-start-date');
+      const endEl = document.getElementById('chart-end-date');
+
+      if (filteredRecords.length === 0) {
+        barsContainer.innerHTML = `<div class="absolute inset-0 flex items-center justify-center text-xs text-gray-500">無數據</div>`;
+        startEl.textContent = '--';
+        endEl.textContent = '--';
+        return;
+      }
+
+      // 圖表採用由舊到新的順序繪製
+      const chartData = [...filteredRecords].reverse();
+      startEl.textContent = chartData[0].date;
+      endEl.textContent = chartData[chartData.length - 1].date;
+
+      const maxAbsVal = Math.max(...chartData.map(d => Math.abs(d.todayPnL)), 1000);
+
+      barsContainer.innerHTML = chartData.map(d => {
+        const ratio = d.todayPnL / maxAbsVal;
+        const heightPct = Math.abs(ratio) * 50; // 50% 為中軸最大值
+        
+        let barStyle = '';
+        let tooltipColor = '';
+        if (d.todayPnL >= 0) {
+          barStyle = `bottom: 50%; height: ${heightPct}%; background-color: #ff4d4d;`;
+          tooltipColor = 'text-red-400';
+        } else {
+          barStyle = `top: 50%; height: ${heightPct}%; background-color: #00cc66;`;
+          tooltipColor = 'text-green-400';
+        }
+
+        return `
+          <div class="group relative flex-1 flex flex-col items-center h-full mx-0.5 cursor-pointer">
+            <div class="absolute inset-0 z-20"></div>
+            <div class="absolute w-2 rounded-sm transition-all group-hover:brightness-125" style="${barStyle}"></div>
+            <div class="pointer-events-none absolute bottom-full mb-1.5 hidden group-hover:flex flex-col items-center bg-[#1f1f1f] border border-[#333] text-[9px] p-2 rounded shadow-2xl z-50 min-w-[80px]">
+              <span class="text-white font-semibold font-mono">${d.date}</span>
+              <span class="${tooltipColor} mt-0.5 font-bold font-mono">${d.todayPnL >= 0 ? '+' : ''}${formatNumber(d.todayPnL)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染頁面三的明細清單維護
+    function renderRecordsList() {
+      const container = document.getElementById('records-list');
+      const countBadge = document.getElementById('record-count');
+      
+      countBadge.textContent = `共 ${filteredRecords.length} 筆`;
+
+      if (filteredRecords.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-gray-500 text-xs flex flex-col items-center justify-center gap-2">
+            <i data-lucide="info" class="w-8 h-8 text-gray-600"></i>
+            沒有找到相符的資產數據明細
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filteredRecords.map(item => {
+        const isUpToday = item.todayPnL >= 0;
+        const isUpCum = item.cumulativePnL >= 0;
+        const totalCost = item.marketValue - item.cumulativePnL;
+
+        return `
+          <div class="theme-card rounded-xl p-3 text-xs flex flex-col space-y-2 border border-[#262626] hover:border-[#383838] transition-colors">
+            <div class="flex items-center justify-between border-b border-[#222] pb-1.5">
+              <span class="font-bold text-white flex items-center gap-1 font-mono text-[11px]">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-500"></i> ${item.date}
+              </span>
+              <div class="flex items-center space-x-2">
+                <button onclick="openEditModal('${item.date}')" class="text-[#e28743] hover:text-white transition p-1" title="修改數據">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="openDeleteDialog('${item.date}')" class="text-red-400 hover:text-red-300 transition p-1" title="刪除數據">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+              <div>
+                <p class="text-gray-500">今日盈虧</p>
+                <p class="font-bold mt-0.5 ${isUpToday ? 'stock-up' : 'stock-down'}">
+                  ${isUpToday ? '+' : ''}${formatNumber(item.todayPnL)}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-500">累積盈虧</p>
+                <p class="font-bold mt-0.5 ${isUpCum ? 'stock-up' : 'stock-down'}">
+                  ${isUpCum ? '+' : ''}${formatNumber(item.cumulativePnL)}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-500">股票市值</p>
+                <p class="font-bold mt-0.5 text-gray-200">${formatNumber(item.marketValue)}</p>
+              </div>
+            </div>
+
+            <div class="text-[9px] text-gray-500 flex justify-between pt-1 border-t border-[#222]">
+              <span class="font-mono">推算持股成本: ${formatNumber(totalCost)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // --- 7. 表單送出控制 ---
+
+    // 頁面一的新增表單
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const date = document.getElementById('input-date').value;
+      const todayPnL = parseFloat(document.getElementById('input-today-pnl').value);
+      const cumulativePnL = parseFloat(document.getElementById('input-cum-pnl').value);
+      const marketValue = parseFloat(document.getElementById('input-market-val').value);
+
+      if (!date || isNaN(todayPnL) || isNaN(cumulativePnL) || isNaN(marketValue)) {
+        showToast("請填寫所有完整數據！", "alert-circle");
+        return;
+      }
+
+      const record = { date, todayPnL, cumulativePnL, marketValue };
+
+      try {
+        await saveRecordToDB(record);
+        showToast("資產盈虧紀錄成功！", "check-circle");
+        document.getElementById('record-form').reset();
+        
+        // 重設表單日期為今日
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('input-date').value = todayStr;
+        
+        await loadAndRender();
+      } catch (err) {
+        console.error(err);
+        showToast("資料庫寫入異常", "alert-octagon");
+      }
+    }
+
+    // --- 8. 專屬暗黑 Modal 事件 ---
+
+    // [刪除控制]
+    function openDeleteDialog(date) {
+      deletePendingDate = date;
+      document.getElementById('delete-target-date').textContent = date;
+      
+      const dialog = document.getElementById('delete-confirm-dialog');
+      dialog.classList.remove('hidden');
+
+      // 綁定確認按鈕事件
+      document.getElementById('btn-confirm-delete-action').onclick = async () => {
+        if (deletePendingDate) {
+          await deleteRecordFromDB(deletePendingDate);
+          showToast(`已成功移除 ${deletePendingDate} 帳目`, "trash-2");
+          closeDeleteDialog();
+          await loadAndRender();
+        }
+      };
+    }
+
+    function closeDeleteDialog() {
+      document.getElementById('delete-confirm-dialog').classList.add('hidden');
+      deletePendingDate = null;
+    }
+
+    // [編輯控制]
+    function openEditModal(date) {
+      const record = allRecords.find(r => r.date === date);
+      if (!record) return;
+
+      document.getElementById('edit-date').value = record.date;
+      document.getElementById('edit-today-pnl').value = record.todayPnL;
+      document.getElementById('edit-cum-pnl').value = record.cumulativePnL;
+      document.getElementById('edit-market-val').value = record.marketValue;
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      document.getElementById('edit-form').reset();
+    }
+
+    async function handleEditFormSubmit(event) {
+      event.preventDefault();
+
+      const date = document.getElementById('edit-date').value;
+      const todayPnL = parseFloat(document.getElementById('edit-today-pnl').value);
+      const cumulativePnL = parseFloat(document.getElementById('edit-cum-pnl').value);
+      const marketValue = parseFloat(document.getElementById('edit-market-val').value);
+
+      const record = { date, todayPnL, cumulativePnL, marketValue };
+
+      try {
+        await saveRecordToDB(record);
+        showToast(`${date} 數據更新成功`, "check");
+        closeEditModal();
+        await loadAndRender();
+      } catch (err) {
+        console.error(err);
+        showToast("更新失敗，請再試一次", "alert-circle");
+      }
+    }
+
+    // --- 9. Toast 提示動畫 ---
+    let toastTimeout = null;
+    function showToast(message, iconName = "check") {
+      const toast = document.getElementById('toast');
+      const msgSpan = document.getElementById('toast-msg');
+      const icon = document.getElementById('toast-icon');
+      
+      msgSpan.textContent = message;
+      icon.setAttribute('data-lucide', iconName);
+      
+      // 動態更新 lucide icon 圖示
+      lucide.createIcons();
+
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
